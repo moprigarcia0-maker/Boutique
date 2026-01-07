@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D Brothers Boutique | Luxury Standard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Inter:wght@300;400;600&display=swap');
+        
+        :root { --rolex-green: #006039; --bg-color: #ffffff; --text-color: #0f172a; }
+        .dark-mode { --bg-color: #050505; --text-color: #f8fafc; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            transition: background 0.5s ease, color 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        .page-layer { display: none; }
+        .page-layer.active { display: block; }
+
+        /* Pantalla de Carga VIP */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease-in-out, visibility 1s;
+        }
+
+        .hero-video-emu {
+            background-image: url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 100%;
+            animation: slowZoom 20s infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .btn-luxury {
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            background-color: var(--rolex-green);
+            color: white;
+        }
+
+        .btn-luxury:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,96,57,0.3); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* Modales */
+        .modal-overlay { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.95); 
+            z-index: 200; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .ai-assistant {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 90;
+            background: var(--rolex-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        /* Notificación de Actividad Social (Urgencia) */
+        #social-proof {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 90;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(-150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .dark-mode #social-proof { background: #111; border: 1px solid #333; }
+        #social-proof.active { transform: translateX(0); }
+
+        /* Icono de Regalo */
+        .gift-float {
+            position: fixed;
+            bottom: 6rem;
+            right: 2.5rem;
+            z-index: 85;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        .model-card { overflow: hidden; position: relative; }
+        .model-card img { transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1); }
+        .model-card:hover img { transform: scale(1.08); }
+
+        .size-chip {
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .size-chip.selected {
+            background: var(--rolex-green);
+            color: white;
+            border-color: var(--rolex-green);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <h2 class="text-white text-2xl tracking-[0.5em] uppercase animate-pulse italic">D Brothers</h2>
+        <div class="w-24 h-[1px] bg-white/20 mt-4 overflow-hidden">
+            <div class="w-full h-full bg-[var(--rolex-green)] -translate-x-full animate-[loading_2s_ease-in-out_infinite]"></div>
+        </div>
+    </div>
+    <style> @keyframes loading { from { transform: translateX(-100%); } to { transform: translateX(100%); } } </style>
+
+    <div id="social-proof">
+        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+        <p id="social-text" class="text-[9px] uppercase tracking-widest font-bold"></p>
+    </div>
+
+    <div onclick="toggleModal('gift-modal', true)" class="gift-float text-3xl">🎁</div>
+
+    <div onclick="openContactModal('¡Hola! Necesito asesoría con mi outfit.')" class="ai-assistant">
+        <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
+        Asistente de Estilo
+    </div>
+
+    <nav class="fixed w-full z-50 bg-white/40 dark:bg-black/40 backdrop-blur-2xl border-b border-white/10 dark:border-gray-800 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="text-[var(--rolex-green)] font-bold tracking-[0.3em] text-xl uppercase cursor-pointer" onclick="mostrarCapa('hero')">
+                D Brothers Boutique
+            </div>
+            <div class="hidden md:flex space-x-8 text-[10px] tracking-[0.2em] font-bold uppercase">
+                <button onclick="mostrarCapa('hero')" class="hover:text-[var(--rolex-green)] transition">Inicio</button>
+                <button onclick="mostrarCapa('catalogo')" class="hover:text-[var(--rolex-green)] transition">Colecciones</button>
+                <button onclick="toggleDarkMode()" class="p-2 rounded-full border border-gray-200 dark:border-gray-700">🌓</button>
+            </div>
+            <button onclick="openContactModal('Hola D Brothers, deseo información general.')" class="bg-[var(--rolex-green)] text-white px-4 py-2 text-[9px] font-bold uppercase tracking-widest rounded-sm">WhatsApp</button>
+        </div>
+    </nav>
+
+    <section id="layer-hero" class="page-layer active">
+        <div class="relative h-screen overflow-hidden flex items-center justify-center bg-gray-900">
+            <div class="absolute inset-0 hero-video-emu"></div>
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="relative text-center text-white px-4">
+                <p class="text-[10px] tracking-[0.5em] uppercase mb-4 opacity-80">Establecido en 2026</p>
+                <h1 class="text-6xl md:text-9xl mb-8 italic">Define tu Estilo</h1>
+                <button onclick="mostrarCapa('catalogo')" class="btn-luxury px-16 py-5 text-xs font-bold uppercase tracking-[0.3em]">Explorar Colección</button>
+            </div>
+        </div>
+
+        <section class="py-32 px-6 bg-white dark:bg-[#050505]">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
+                    <div>
+                        <p class="text-[var(--rolex-green)] text-[10px] font-bold tracking-[0.4em] uppercase mb-4">Editorial</p>
+                        <h2 class="text-5xl md:text-7xl italic">The Muse Collection</h2>
+                    </div>
+                    <p class="text-gray-400 text-xs tracking-widest uppercase max-w-xs text-right mt-6 md:mt-0">
+                        Inspiración visual: Cómo vestir las piezas exclusivas de nuestra nueva temporada.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 md:gap-8">
+                    <div class="col-span-12 md:col-span-7 model-card h-[600px] reveal">
+                        <img src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?w=1200" class="w-full h-full object-cover" alt="Modelo D Brothers">
+                    </div>
+                    <div class="col-span-12 md:col-span-5 flex flex-col gap-4 md:gap-8">
+                        <div class="model-card h-[284px] reveal">
+                            <img src="https://images.unsplash.com/photo-1506634572416-48cdfe530110?w=800" class="w-full h-full object-cover">
+                        </div>
+                        <div class="model-card h-[284px] reveal">
+                            <img src="https://images.unsplash.com/photo-1550246140-5119ae4790b8?w=800" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-32 reveal">
+                    <h3 class="text-center text-3xl italic mb-12">Experiencias D Brothers</h3>
+                    <div class="swiper mySwiper max-w-4xl mx-auto">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide text-center p-10 bg-gray-50 dark:bg-zinc-900">
+                                <p class="italic text-lg mb-4 text-gray-600 dark:text-gray-300">"La calidad de la tela es otro nivel, el envío llegó en 2 horas. 🔥"</p>
+                                <p class="text-[10px] font-bold tracking-[0.3em] uppercase">— @ClienteVIP</p>
+                            </div>
+                            <div class="swiper-slide text-center p-10 bg-gray-50 dark:bg-zinc-900">
+                                <p class="italic text-lg mb-4 text-gray-600 dark:text-gray-300">"Los mejores Jordan que he comprado, 100% auténticos y atención rápida."</p>
+                                <p class="text-[10px] font-bold tracking-[0.3em] uppercase">— @UrbanStyleDR</p>
+                            </div>
+                            <div class="swiper-slide text-center p-10 bg-gray-50 dark:bg-zinc-900">
+                                <p class="italic text-lg mb-4 text-gray-600 dark:text-gray-300">"D Brothers no es solo ropa, es un estándar de lujo en el país."</p>
+                                <p class="text-[10px] font-bold tracking-[0.3em] uppercase">— @MeranFan_</p>
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+
+                <div class="mt-20 text-center reveal">
+                    <button onclick="mostrarCapa('catalogo')" class="border-b border-[var(--rolex-green)] pb-2 text-[10px] font-bold uppercase tracking-[0.4em] hover:text-[var(--rolex-green)] transition">Ver piezas del modelo</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 bg-gray-50 dark:bg-zinc-950/50">
+            <div class="max-w-7xl mx-auto px-10 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                <div class="reveal">
+                    <h4 class="text-[10px] font-bold tracking-widest uppercase mb-4 text-[var(--rolex-green)]">Envío Express</h4>
+                    <p class="text-xs text-gray-400">Entrega prioritaria el mismo día en zona urbana.</p>
+                </div>
+                <div class="reveal">
+                    <h4 class="text-[10px] font-bold tracking-widest uppercase mb-4 text-[var(--rolex-green)]">Calidad Elite</h4>
+                    <p class="text-xs text-gray-400">Piezas seleccionadas de los mejores talleres del mundo.</p>
+                </div>
+                <div class="reveal">
+                    <h4 class="text-[10px] font-bold tracking-widest uppercase mb-4 text-[var(--rolex-green)]">Asesoría VIP</h4>
+                    <p class="text-xs text-gray-400">Contacto directo con TITI y MERAN 24/7.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 px-10 border-t border-gray-100 dark:border-gray-900">
+            <div class="max-w-7xl mx-auto text-center mb-16 reveal">
+                <h2 class="text-4xl mb-4 italic">#DBrothersLook</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400" class="w-full h-80 object-cover grayscale hover:grayscale-0 transition duration-500">
+                    <img src="https://images.unsplash.com/photo-1529139513065-07b2ee099533?w=400" class="w-full h-80 object-cover grayscale hover:grayscale-0 transition duration-500">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400" class="w-full h-80 object-cover grayscale hover:grayscale-0 transition duration-500">
+                    <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=400" class="w-full h-80 object-cover grayscale hover:grayscale-0 transition duration-500">
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <section id="layer-catalogo" class="page-layer pt-40 min-h-screen">
+        <div class="text-center px-6">
+            <h2 class="text-4xl italic mb-10">Colecciones Curadas</h2>
+            <div class="flex space-x-6 justify-center border-b border-gray-100 dark:border-gray-800 pb-4 overflow-x-auto no-scrollbar mb-12">
+                <button onclick="filtrar('tshirt', this)" class="cat-btn active text-[10px] uppercase tracking-[0.2em]">T-Shirts</button>
+                <button onclick="filtrar('gorras', this)" class="cat-btn text-[10px] uppercase tracking-[0.2em] text-gray-400">Gorras</button>
+                <button onclick="filtrar('pantalones', this)" class="cat-btn text-[10px] uppercase tracking-[0.2em] text-gray-400">Pantalones</button>
+                <button onclick="filtrar('tenis', this)" class="cat-btn text-[10px] uppercase tracking-[0.2em] text-gray-400">Jordan</button>
+            </div>
+        </div>
+        <div id="contenedor-productos" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12 p-10 max-w-7xl mx-auto"></div>
+    </section>
+
+    <section id="layer-detalle" class="page-layer fixed inset-0 z-[100] bg-white dark:bg-black overflow-y-auto">
+        <div class="flex flex-col md:flex-row min-h-screen">
+            <button onclick="mostrarCapa('catalogo')" class="absolute top-8 left-8 z-[110] text-[10px] font-bold tracking-widest border border-gray-300 dark:border-gray-700 px-6 py-2 uppercase rounded-full bg-white dark:bg-black">← Volver</button>
+            <div class="md:w-1/2 h-[70vh] md:h-screen sticky top-0 overflow-hidden bg-gray-100">
+                <img id="det-img" src="" class="w-full h-full object-cover">
+            </div>
+            <div class="md:w-1/2 p-12 md:p-24 flex flex-col justify-center">
+                <div class="bg-orange-50 dark:bg-orange-950/20 py-2 px-4 mb-6 border-l-4 border-orange-500">
+                    <p class="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-[0.2em]">🔥 ¡Atención! Solo quedan 2 unidades.</p>
+                </div>
+                <p id="det-ref" class="text-[var(--rolex-green)] text-[10px] font-bold tracking-[0.3em] uppercase mb-4"></p>
+                <h2 id="det-titulo" class="text-6xl font-serif italic mb-6"></h2>
+                
+                <div class="mb-8">
+                    <p class="text-[10px] font-bold uppercase tracking-widest mb-4">Selecciona tu talla:</p>
+                    <div class="flex gap-2">
+                        <div class="size-chip" onclick="selectSize('S', this)">S</div>
+                        <div class="size-chip" onclick="selectSize('M', this)">M</div>
+                        <div class="size-chip" onclick="selectSize('L', this)">L</div>
+                        <div class="size-chip" onclick="selectSize('XL', this)">XL</div>
+                    </div>
+                </div>
+
+                <p id="det-precio" class="text-3xl font-light mb-10"></p>
+                <div class="border-y border-gray-100 dark:border-gray-800 py-8 mb-10">
+                    <p id="det-info" class="text-gray-500 dark:text-gray-400 leading-relaxed text-lg mb-6"></p>
+                    <button onclick="toggleModal('size-modal', true)" class="text-[10px] font-bold uppercase tracking-widest text-[var(--rolex-green)] underline">Ver Guía de Tallas</button>
+                </div>
+                <button id="buy-btn" class="btn-luxury w-full py-5 text-xs font-bold tracking-[0.2em] uppercase rounded-sm">Confirmar vía WhatsApp</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="gift-modal" class="modal-overlay">
+        <div class="bg-white dark:bg-zinc-900 p-10 max-w-sm w-full text-center rounded-sm">
+            <h3 class="text-3xl italic mb-4 dark:text-white">🎁 Regalo de Bienvenida</h3>
+            <p class="text-sm text-gray-500 mb-8 leading-relaxed">¡Felicidades! Por ser tu primera visita, tienes un 10% de descuento en tu primer pedido si confirmas hoy.</p>
+            <button onclick="toggleModal('gift-modal', false); openContactModal('¡Hola! Quiero activar mi Cupón del 10%.')" class="btn-luxury w-full py-4 text-[10px] font-bold uppercase tracking-widest">Activar Cupón</button>
+            <button onclick="toggleModal('gift-modal', false)" class="mt-4 text-[9px] uppercase tracking-widest text-gray-400">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="contact-modal" class="modal-overlay">
+        <div class="bg-white dark:bg-zinc-900 p-8 max-w-sm w-full text-center rounded-sm">
+            <h3 class="text-xl italic mb-6 dark:text-white">Contactar con un Asesor</h3>
+            <div class="flex flex-col gap-4">
+                <button onclick="goToWhatsApp('18097809894')" class="border border-gray-200 dark:border-gray-700 py-6 hover:bg-gray-50 dark:hover:bg-zinc-800 transition group">
+                    <span class="block text-2xl font-light tracking-[0.3em] text-[var(--rolex-green)] group-hover:scale-110 transition">TITI</span>
+                    <span class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">Asesoría Directa VIP</span>
+                </button>
+                <button onclick="goToWhatsApp('18294691823')" class="border border-gray-200 dark:border-gray-700 py-6 hover:bg-gray-50 dark:hover:bg-zinc-800 transition group">
+                    <span class="block text-2xl font-light tracking-[0.3em] text-[var(--rolex-green)] group-hover:scale-110 transition">MERAN</span>
+                    <span class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">Gestión de Pedidos</span>
+                </button>
+            </div>
+            <button onclick="toggleModal('contact-modal', false)" class="mt-8 text-[9px] uppercase tracking-widest text-gray-400 hover:text-black dark:hover:text-white transition">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="size-modal" class="modal-overlay">
+        <div class="bg-white dark:bg-zinc-900 p-8 max-w-md w-full relative">
+            <button onclick="toggleModal('size-modal', false)" class="absolute top-4 right-4 text-xl dark:text-white">✕</button>
+            <h3 class="text-2xl italic mb-6 dark:text-white">Guía de Tallas</h3>
+            <table class="w-full text-sm text-left dark:text-gray-300">
+                <tr class="border-b dark:border-gray-700"><th class="py-2 text-[var(--rolex-green)]">Talla</th><th class="py-2">Pecho (cm)</th><th class="py-2">Largo (cm)</th></tr>
+                <tr class="border-b dark:border-gray-700"><td class="py-2 font-bold">S</td><td class="py-2">95-100</td><td class="py-2">70</td></tr>
+                <tr class="border-b dark:border-gray-700"><td class="py-2 font-bold">M</td><td class="py-2">100-105</td><td class="py-2">72</td></tr>
+                <tr class="border-b dark:border-gray-700"><td class="py-2 font-bold">L</td><td class="py-2">105-110</td><td class="py-2">74</td></tr>
+                <tr><td class="py-2 font-bold">XL</td><td class="py-2">110-118</td><td class="py-2">76</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <footer class="py-12 border-t border-gray-100 dark:border-gray-900 text-center">
+        <p class="text-[9px] tracking-[0.5em] uppercase opacity-40 italic">D Brothers Boutique Luxury Experience • 2026</p>
+    </footer>
+
+    <script>
+        let currentMessage = "";
+        let selectedSize = "";
+
+        const DATA = {
+            tshirt: [{ id: "TS-001", n: 'Signature White V', p: '$45.00', i: 'Algodón Supima de fibra larga.', img: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800' }],
+            gorras: [{ id: "CP-001", n: 'MLB Premium Collection', p: '$35.00', i: 'Colección exclusiva New Era.', img: 'https://storage.googleapis.com/contextual_image_gen/image_05d2e2.png' }],
+            pantalones: [{ id: "PA-001", n: 'Tactical Cargo Black', p: '$85.00', i: 'Nylon reforzado con acabado mate.', img: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800' }],
+            tenis: [{ id: "TN-001", n: 'Jordan 1 Retro High', p: '$190.00', i: 'El ícono en su forma más pura.', img: 'https://images.unsplash.com/photo-1584735175315-9d5df23860e6?w=800' }]
+        };
+
+        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+        function toggleModal(id, show) { document.getElementById(id).classList.toggle('active', show); }
+
+        function selectSize(size, el) {
+            document.querySelectorAll('.size-chip').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedSize = size;
+        }
+
+        function openContactModal(message) {
+            if (message.includes('Ref:') && selectedSize === "") {
+                alert("Por favor, selecciona una talla antes de confirmar.");
+                return;
+            }
+            currentMessage = selectedSize ? `${message} en Talla ${selectedSize}` : message;
+            toggleModal('contact-modal', true);
+        }
+
+        function goToWhatsApp(number) {
+            const url = `https://wa.me/${number}?text=${encodeURIComponent(currentMessage)}`;
+            window.open(url, '_blank');
+            toggleModal('contact-modal', false);
+        }
+
+        function mostrarCapa(id) {
+            document.querySelectorAll('.page-layer').forEach(l => l.classList.remove('active'));
+            document.getElementById(`layer-${id}`).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function filtrar(cat, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('text-[var(--rolex-green)]');
+                b.classList.add('text-gray-400');
+            });
+            btn.classList.add('text-[var(--rolex-green)]');
+            const grid = document.getElementById('contenedor-productos');
+            grid.innerHTML = '';
+            
+            DATA[cat].forEach((p, index) => {
+                const item = document.createElement('div');
+                item.className = "group cursor-pointer reveal relative";
+                item.style.transitionDelay = `${index * 150}ms`; // Efecto Stagger
+                item.onclick = () => verDetalle(cat, p.id);
+                item.innerHTML = `
+                    <div class="relative overflow-hidden aspect-[3/4] mb-6 bg-gray-100 dark:bg-zinc-900">
+                        <img src="${p.img}" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110">
+                    </div>
+                    <p class="text-[9px] text-gray-400 uppercase">Ref: ${p.id}</p>
+                    <h3 class="text-xl italic">${p.n}</h3>
+                    <p class="text-sm font-bold">${p.p}</p>
+                `;
+                grid.appendChild(item);
+            });
+            ScrollReveal().reveal('.reveal', { duration: 1000, interval: 100 });
+        }
+
+        function verDetalle(cat, id) {
+            const p = DATA[cat].find(x => x.id === id);
+            selectedSize = ""; 
+            document.querySelectorAll('.size-chip').forEach(c => c.classList.remove('selected'));
+            document.getElementById('det-titulo').innerText = p.n;
+            document.getElementById('det-precio').innerText = p.p;
+            document.getElementById('det-info').innerText = p.i;
+            document.getElementById('det-img').src = p.img;
+            document.getElementById('det-ref').innerText = `Referencia #${p.id}`;
+            const msg = `Hola D Brothers Boutique, me interesa la ${p.n} (Ref: ${p.id})`;
+            document.getElementById('buy-btn').onclick = () => openContactModal(msg);
+            mostrarCapa('detalle');
+        }
+
+        // Sistema de Urgencia (Social Proof)
+        const socialNotifs = [
+            "3 personas están viendo este artículo ahora mismo",
+            "Alguien en Santo Domingo acaba de comprar una Signature White",
+            "🔥 Solo queda 1 unidad de Jordan 1 Retro",
+            "Alguien en Santiago preguntó por Tactical Cargo"
+        ];
+
+        function showSocialProof() {
+            const el = document.getElementById('social-proof');
+            const txt = document.getElementById('social-text');
+            txt.innerText = socialNotifs[Math.floor(Math.random() * socialNotifs.length)];
+            el.classList.add('active');
+            setTimeout(() => el.classList.remove('active'), 4000);
+        }
+
+        window.onload = () => {
+            // Inicializar Carrusel de Reviews
+            new Swiper(".mySwiper", {
+                autoplay: { delay: 5000 },
+                pagination: { el: ".swiper-pagination", clickable: true },
+            });
+
+            // Loop de Notificaciones cada 12 segundos
+            setInterval(showSocialProof, 12000);
+
+            setTimeout(() => {
+                const pre = document.getElementById('preloader');
+                pre.style.opacity = '0';
+                setTimeout(() => pre.style.display = 'none', 1000);
+            }, 2000);
+
+            filtrar('tshirt', document.querySelector('.cat-btn'));
+            ScrollReveal().reveal('.reveal', { distance: '50px', duration: 1200 });
+        };
+    </script>
+</body>
+</html>
